@@ -1,18 +1,35 @@
 import winston from 'winston';
 import { format } from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+
+const LogFormat = format.combine(
+  format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss',
+  }),
+  format.printf((info) =>
+      JSON.stringify({
+          t: info.timestamp,
+          l: info.level,
+          m: info.message,
+          s: info.splat !== undefined ? `${info.splat}` : '',
+      }) + ','
+  )
+);
 
 const logger = winston.createLogger({
   level: 'info',
-  format: format.combine(format.timestamp(), format.json()),
+  format: LogFormat,
   transports: [
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/combined.log' }),
+    new DailyRotateFile({ 
+      filename: `logs/log_%DATE%.log`,
+      datePattern: 'yyyy-MM-DD'
+    }),
   ],
 });
 
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({
-    format: winston.format.simple(),
+    format: LogFormat,
   }));
 }
 
