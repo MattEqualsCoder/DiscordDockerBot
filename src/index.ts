@@ -1,5 +1,5 @@
 import { DiscordToken, DiscordPrefix, DockerProfiles } from './environment';
-import { Client, GatewayIntentBits, Partials, Events, MessageMentions, Message } from 'discord.js';
+import { Client, GatewayIntentBits, Partials, Events, Message } from 'discord.js';
 import { DockerApi } from './docker-api';
 import { logger } from './logger';
 
