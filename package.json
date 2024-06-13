@@ -1,0 +1,23 @@
+{
+  "name": "discord-docker-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "discord.js": "^14.15.3",
+    "dotenv": "^16.4.5",
+    "ts-node": "^10.9.2",
+    "winston": "^3.13.0",
+    "yaml": "^2.4.5"
+  }
+}
