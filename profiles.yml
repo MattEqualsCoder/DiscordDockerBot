@@ -1,8 +1,0 @@
-neko:
-  discord_command: neko
-  docker_profile: dotnet
-  server_ids:
-   - "1250164204099469312"
-  user_ids:
-  started_message:
-  stopped_message:
