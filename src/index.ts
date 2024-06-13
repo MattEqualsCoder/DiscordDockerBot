@@ -86,7 +86,7 @@ client.on(Events.MessageCreate, message => {
             });
         }
     } else {
-        logger.warn(`User ${message.author.displayName} attempted to execute command ${message.content} without proper authorization`);
+        logger.warn(`User ${message.author.displayName} (${message.author.id}) attempted to execute command ${message.content} without proper authorization`);
         ReplyError(message);
     }
 });
