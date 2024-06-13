@@ -50,7 +50,7 @@ Object.keys(yamlValue).forEach(profile => {
         IsUserCommand: profileDetails.user_ids ? true : false,
         StartingMessage: profileDetails.starting_message,
         StartedMessage: profileDetails.started_message,
-        StoppingMessage: profileDetails.starting_message,
+        StoppingMessage: profileDetails.stopping_message,
         StoppedMessage: profileDetails.stopped_message,
         RestartingMessage: profileDetails.restarting_message,
         RestartedMessage: profileDetails.restarted_message
