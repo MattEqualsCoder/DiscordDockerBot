@@ -24,8 +24,12 @@ class DiscordDockerCommands {
     UserIds: string[] = []
     IsServerCommand: boolean
     IsUserCommand: boolean
+    StartingMessage: string
     StartedMessage: string
+    StoppingMessage: string
     StoppedMessage: string
+    RestartingMessage: string
+    RestartedMessage: string
 }
 
 let yamlProfilePath = process.env.DISCORD_YAML_PROFILE_PATH ?? "";
@@ -44,8 +48,12 @@ Object.keys(yamlValue).forEach(profile => {
         UserIds: profileDetails.user_ids ? profileDetails.user_ids : [],
         IsServerCommand: profileDetails.server_ids ? true : false,
         IsUserCommand: profileDetails.user_ids ? true : false,
+        StartingMessage: profileDetails.starting_message,
         StartedMessage: profileDetails.started_message,
-        StoppedMessage: profileDetails.stopped_message
+        StoppingMessage: profileDetails.starting_message,
+        StoppedMessage: profileDetails.stopped_message,
+        RestartingMessage: profileDetails.restarting_message,
+        RestartedMessage: profileDetails.restarted_message
     });
 });
 

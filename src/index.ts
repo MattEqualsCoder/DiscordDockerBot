@@ -40,6 +40,10 @@ client.on(Events.MessageCreate, message => {
     if ((message.guildId && command.ServerIds.includes(message.guildId)) || command.UserIds.includes(message.author.id)) {
         let commandString = messageParts[1].trim().toLowerCase();
         if (commandString === "start") {
+
+            let response = command.StartingMessage ? command.StartingMessage : "Starting docker image";
+            Reply(message, response);
+
             docker.StartProfile(command.DockerProfile, (isSuccessful) => {
 
                 if (isSuccessful) {
@@ -52,6 +56,9 @@ client.on(Events.MessageCreate, message => {
             });
         } else if (commandString === "stop") {
             
+            let response = command.StoppingMessage ? command.StoppingMessage : "Stopping docker image";
+            Reply(message, response);
+
             docker.StopProfile(command.DockerProfile, (isSuccessful) => {
 
                 if (isSuccessful) {
@@ -63,14 +70,18 @@ client.on(Events.MessageCreate, message => {
                 
             });
         } else if (commandString === "restart") {
+
+            let response = command.RestartingMessage ? command.RestartingMessage : "Restarting docker image";
+            Reply(message, response);
+
             docker.StopProfile(command.DockerProfile, (isSuccessful) => {
                 docker.StartProfile(command.DockerProfile, (isSuccessful) => {
-                    message.reply({
-                        content: "Restarted",
-                        allowedMentions: {
-                            repliedUser: false
-                        }
-                    });
+                    if (isSuccessful) {
+                        let response = command.RestartedMessage ? command.RestartedMessage : "Docker image restarted successfully";
+                        Reply(message, response);
+                    } else {
+                        ReplyError(message);
+                    }
                 });
             });
         }
