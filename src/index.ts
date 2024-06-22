@@ -1,4 +1,4 @@
-import { DiscordToken, DiscordPrefix, DockerProfiles } from './environment';
+import { DiscordToken, DiscordPrefix, DockerProfiles, AdminUsers } from './environment';
 import { Client, GatewayIntentBits, Partials, Events, Message } from 'discord.js';
 import { DockerApi } from './docker-api';
 import { logger } from './logger';
@@ -23,71 +23,81 @@ client.once(Events.ClientReady, readyClient => {
 });
 
 client.on(Events.MessageCreate, message => {
-    if (!message.content.startsWith(DiscordPrefix)) {
-        return;
-    }
 
-    var messageParts = message.content.substring(1).split(" ");
-    if (messageParts.length < 2) {
-        return;
-    }
-
-    let command = DockerProfiles.get(messageParts[0]);
-    if (!command) {
-        return;
-    }
-
-    if ((message.guildId && command.ServerIds.includes(message.guildId)) || command.UserIds.includes(message.author.id)) {
-        let commandString = messageParts[1].trim().toLowerCase();
-        if (commandString === "start") {
-
-            let response = command.StartingMessage ? command.StartingMessage : "Starting docker image";
-            Reply(message, response);
-
-            docker.StartProfile(command.DockerProfile, (isSuccessful) => {
-
-                if (isSuccessful) {
-                    let response = command.StartedMessage ? command.StartedMessage : "Docker image started successfully"; 
-                    Reply(message, response);
-                } else {
-                    ReplyError(message);
-                }
-                
-            });
-        } else if (commandString === "stop") {
-            
-            let response = command.StoppingMessage ? command.StoppingMessage : "Stopping docker image";
-            Reply(message, response);
-
-            docker.StopProfile(command.DockerProfile, (isSuccessful) => {
-
-                if (isSuccessful) {
-                    let response = command.StoppedMessage ? command.StoppedMessage : "Docker image stopped successfully";
-                    Reply(message, response);
-                } else {
-                    ReplyError(message);
-                }
-                
-            });
-        } else if (commandString === "restart") {
-
-            let response = command.RestartingMessage ? command.RestartingMessage : "Restarting docker image";
-            Reply(message, response);
-
-            docker.StopProfile(command.DockerProfile, (isSuccessful) => {
+    try 
+    {
+        if (!message.content.startsWith(DiscordPrefix)) {
+            return;
+        }
+    
+        var messageParts = message.content.substring(1).split(" ");
+        if (messageParts.length < 2) {
+            return;
+        }
+    
+        let command = DockerProfiles.get(messageParts[0]);
+        if (!command) {
+            return;
+        }
+    
+        if ((message.guildId && command.ServerIds.includes(message.guildId)) || command.UserIds.includes(message.author.id) || AdminUsers.includes(message.author.id)) {
+    
+            logger.info(`Received command ${message.content}`);
+    
+            let commandString = messageParts[1].trim().toLowerCase();
+            if (commandString === "start") {
+    
+                let response = command.StartingMessage ? command.StartingMessage : "Starting docker image";
+                Reply(message, response);
+    
                 docker.StartProfile(command.DockerProfile, (isSuccessful) => {
+    
                     if (isSuccessful) {
-                        let response = command.RestartedMessage ? command.RestartedMessage : "Docker image restarted successfully";
+                        let response = command.StartedMessage ? command.StartedMessage : "Docker image started successfully"; 
                         Reply(message, response);
                     } else {
                         ReplyError(message);
                     }
+                    
                 });
-            });
+            } else if (commandString === "stop") {
+                
+                let response = command.StoppingMessage ? command.StoppingMessage : "Stopping docker image";
+                Reply(message, response);
+    
+                docker.StopProfile(command.DockerProfile, (isSuccessful) => {
+    
+                    if (isSuccessful) {
+                        let response = command.StoppedMessage ? command.StoppedMessage : "Docker image stopped successfully";
+                        Reply(message, response);
+                    } else {
+                        ReplyError(message);
+                    }
+                    
+                });
+            } else if (commandString === "restart") {
+    
+                let response = command.RestartingMessage ? command.RestartingMessage : "Restarting docker image";
+                Reply(message, response);
+    
+                docker.StopProfile(command.DockerProfile, (isSuccessful) => {
+                    docker.StartProfile(command.DockerProfile, (isSuccessful) => {
+                        if (isSuccessful) {
+                            let response = command.RestartedMessage ? command.RestartedMessage : "Docker image restarted successfully";
+                            Reply(message, response);
+                        } else {
+                            ReplyError(message);
+                        }
+                    });
+                });
+            }
+        } else {
+            logger.warn(`User ${message.author.displayName} (${message.author.id}) attempted to execute command ${message.content} without proper authorization`);
+            ReplyError(message);
         }
-    } else {
-        logger.warn(`User ${message.author.displayName} (${message.author.id}) attempted to execute command ${message.content} without proper authorization`);
-        ReplyError(message);
+    }
+    catch (e) {
+        logger.error(e);
     }
 });
 

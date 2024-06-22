@@ -16,6 +16,7 @@ const DiscordToken = process.env.DISCORD_BOT_TOKEN
 const DiscordPrefix = process.env.DISCORD_PREFIX ?? ""
 const DockerProfiles = new Map<string, DiscordDockerCommands>();
 const WaitAttempts = (Number(process.env.WAIT_TIME ?? "60") / 5);
+const AdminUsers = (process.env.ADMIN_USERS ?? "").split(",")
 
 class DiscordDockerCommands {
     DiscordCommand: string = ""
@@ -62,5 +63,6 @@ export {
     DiscordToken,
     DiscordPrefix,
     DockerProfiles,
-    WaitAttempts
+    WaitAttempts,
+    AdminUsers
 }
