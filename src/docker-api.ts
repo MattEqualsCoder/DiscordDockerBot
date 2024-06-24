@@ -21,6 +21,9 @@ export class DockerApi {
                     logger.info(`Received status ${response.status} when attempting to start ${profile}`);
                     callback(false);
                 }
+            }).catch((e) => {
+                logger.error(e);
+                callback(false);
             });
         } catch (e) {
             logger.error(e);
@@ -39,6 +42,9 @@ export class DockerApi {
                     logger.info(`Received status ${response.status} when attempting to stop ${profile}`);
                     callback(false);
                 }
+            }).catch((e) => {
+                logger.error(e);
+                callback(false);
             });
         } catch (e) {
             logger.error(e);
@@ -64,6 +70,9 @@ export class DockerApi {
                     }
                 }
     
+            }).catch((e) => {
+                logger.error(e);
+                callback(false);
             });
         } catch (e) {
             logger.error(e);
@@ -76,6 +85,6 @@ export class DockerApi {
     RunCommand(command: string) : Promise<AxiosResponse<any, any>> {
         let url = `${this.DockerUrl}${command}`;
         logger.info(`Calling url: ${url}`);
-        return axios(url);
+        return axios.get(url);
     }
 }
